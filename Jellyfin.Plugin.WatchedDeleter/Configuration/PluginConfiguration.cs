@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MediaBrowser.Model.Plugins;
 
-namespace Jellyfin.Plugin.AutoDelete.Configuration;
+namespace Jellyfin.Plugin.WatchedDeleter.Configuration;
 
 /// <summary>
 /// The unit used for the delete delay.

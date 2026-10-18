@@ -20,12 +20,12 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Build plugin
-        run: dotnet publish Jellyfin.Plugin.AutoDelete/Jellyfin.Plugin.AutoDelete.csproj -c Release -o artifacts
+        run: dotnet publish Jellyfin.Plugin.WatchedDeleter/Jellyfin.Plugin.WatchedDeleter.csproj -c Release -o artifacts
 
       - name: Upload plugin dll
         uses: actions/upload-artifact@v4
         with:
-          name: Jellyfin.Plugin.AutoDelete
+          name: Jellyfin.Plugin.WatchedDeleter
           path: |
-            artifacts/Jellyfin.Plugin.AutoDelete.dll
-            artifacts/Jellyfin.Plugin.AutoDelete.pdb
+            artifacts/Jellyfin.Plugin.WatchedDeleter.dll
+            artifacts/Jellyfin.Plugin.WatchedDeleter.pdb

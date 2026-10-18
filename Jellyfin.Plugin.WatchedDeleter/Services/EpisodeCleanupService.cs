@@ -5,14 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Data.Enums;
-using Jellyfin.Plugin.AutoDelete.Configuration;
+using Jellyfin.Plugin.WatchedDeleter.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.IO;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.AutoDelete.Services;
+namespace Jellyfin.Plugin.WatchedDeleter.Services;
 
 /// <summary>
 /// Finds episodes that were watched longer ago than the configured delay and deletes them.

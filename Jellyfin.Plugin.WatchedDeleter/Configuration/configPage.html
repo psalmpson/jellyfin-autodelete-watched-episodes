@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Auto Delete Watched Episodes</title>
+    <title>Jellyfin Watched Deleter</title>
 </head>
 <body>
-    <div id="AutoDeleteWatchedEpisodesConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+    <div id="WatchedDeleterConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
         <div data-role="content">
             <div class="content-primary">
 
                 <div class="verticalSection">
-                    <h2 class="sectionTitle">Auto Delete Watched Episodes</h2>
+                    <h2 class="sectionTitle">Jellyfin Watched Deleter</h2>
                     <p class="fieldDescription">
-                        Episodes are deleted once every watched episode in the selected libraries has been watched longer ago
-                        than the delay below. The most recent watch by any user restarts the countdown.
+                        An episode is deleted once the delay below has passed since it was last watched.
+                        The most recent watch by any user restarts the countdown.
                     </p>
                     <p class="fieldDescription">
                         The cleanup runs as a scheduled task (<strong>Dashboard &rarr; Scheduled Tasks &rarr; Delete watched episodes</strong>)
@@ -21,7 +21,7 @@
                     </p>
                 </div>
 
-                <form id="AutoDeleteConfigForm">
+                <form id="WatchedDeleterConfigForm">
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
@@ -113,10 +113,10 @@
                 'use strict';
 
                 var pluginId = '9386bc33-7cb3-4303-802a-c7f53827022f';
-                var taskKey = 'AutoDeleteWatchedEpisodes';
+                var taskKey = 'WatchedDeleterCleanup';
 
-                var page = document.querySelector('#AutoDeleteWatchedEpisodesConfigPage');
-                var form = document.querySelector('#AutoDeleteConfigForm');
+                var page = document.querySelector('#WatchedDeleterConfigPage');
+                var form = document.querySelector('#WatchedDeleterConfigForm');
                 var libraryList = document.querySelector('#LibraryList');
 
                 function getVirtualFolders() {

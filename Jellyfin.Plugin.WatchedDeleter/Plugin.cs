@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Jellyfin.Plugin.AutoDelete.Configuration;
+using Jellyfin.Plugin.WatchedDeleter.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 
-namespace Jellyfin.Plugin.AutoDelete;
+namespace Jellyfin.Plugin.WatchedDeleter;
 
 /// <summary>
 /// Main plugin entry point.
@@ -18,7 +18,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// </summary>
     public const string PluginId = "9386bc33-7cb3-4303-802a-c7f53827022f";
 
-    private const string ConfigurationPageResource = "Jellyfin.Plugin.AutoDelete.Configuration.configPage.html";
+    private const string ConfigurationPageResource = "Jellyfin.Plugin.WatchedDeleter.Configuration.configPage.html";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Plugin"/> class.
@@ -37,14 +37,14 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public static Plugin? Instance { get; private set; }
 
     /// <inheritdoc />
-    public override string Name => "Auto Delete Watched Episodes";
+    public override string Name => "Jellyfin Watched Deleter";
 
     /// <inheritdoc />
     public override Guid Id => Guid.Parse(PluginId);
 
     /// <inheritdoc />
     public override string Description =>
-        "Deletes episodes a configurable amount of time after they have been watched, and removes series and seasons that no longer contain any episodes.";
+        "Deletes episodes once they have been watched and a configurable delay has passed, then removes series and seasons that no longer contain any episodes.";
 
     /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()

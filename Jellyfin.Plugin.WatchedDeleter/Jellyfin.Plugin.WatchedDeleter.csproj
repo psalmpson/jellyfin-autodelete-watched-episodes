@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>Jellyfin.Plugin.AutoDelete</RootNamespace>
-    <AssemblyName>Jellyfin.Plugin.AutoDelete</AssemblyName>
+    <RootNamespace>Jellyfin.Plugin.WatchedDeleter</RootNamespace>
+    <AssemblyName>Jellyfin.Plugin.WatchedDeleter</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Configuration/configPage.html"
-                      LogicalName="Jellyfin.Plugin.AutoDelete.Configuration.configPage.html" />
+                      LogicalName="Jellyfin.Plugin.WatchedDeleter.Configuration.configPage.html" />
   </ItemGroup>
 
 </Project>

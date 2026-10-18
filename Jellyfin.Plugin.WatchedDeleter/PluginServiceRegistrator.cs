@@ -1,9 +1,9 @@
-using Jellyfin.Plugin.AutoDelete.Services;
+using Jellyfin.Plugin.WatchedDeleter.Services;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jellyfin.Plugin.AutoDelete;
+namespace Jellyfin.Plugin.WatchedDeleter;
 
 /// <summary>
 /// Registers the plugin's services with Jellyfin's dependency injection container.

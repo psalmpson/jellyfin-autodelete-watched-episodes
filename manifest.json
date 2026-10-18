@@ -1,19 +1,19 @@
 [
   {
     "guid": "9386bc33-7cb3-4303-802a-c7f53827022f",
-    "name": "Auto Delete Watched Episodes",
-    "description": "Deletes episodes from the libraries you select once they have been watched and the configured delay has passed. Series and seasons that no longer contain any episodes are removed as well. Includes a dry run mode that only logs what would be deleted.",
-    "overview": "Automatically delete episodes a while after they were watched.",
+    "name": "Jellyfin Watched Deleter",
+    "description": "Deletes episodes once they have been watched and a configurable delay has passed, then removes series and seasons that no longer contain any episodes.",
+    "overview": "Automatically delete episodes a while after they have been watched.",
     "owner": "psalmpson",
     "category": "General",
     "versions": [
       {
-        "version": "1.0.0.0",
-        "changelog": "Initial release.",
+        "version": "1.0.1.0",
+        "changelog": "Renamed the plugin to Jellyfin Watched Deleter and fixed the plugin description.",
         "targetAbi": "12.0.0.0",
-        "sourceUrl": "https://github.com/psalmpson/jellyfin-autodelete-watched-episodes/releases/download/v1.0.0.0/Jellyfin.Plugin.AutoDelete_1.0.0.0.zip",
-        "checksum": "2E5FD6DFFA0A11719507677F644EBB64",
-        "timestamp": "2026-10-18T19:55:43Z"
+        "sourceUrl": "https://github.com/psalmpson/jellyfin-watched-deleter/releases/download/v1.0.1.0/Jellyfin.Plugin.WatchedDeleter_1.0.1.0.zip",
+        "checksum": "719A74887733A7FCFE823AC179F0BAE4",
+        "timestamp": "2026-10-18T20:33:14Z"
       }
     ]
   }
