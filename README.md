@@ -36,17 +36,33 @@ The `publish` folder then contains a single `Jellyfin.Plugin.AutoDelete.dll` (pl
 
 ## Install
 
-1. Create a folder for the plugin inside the server's plugin directory, for example:
+### From the plugin repository (recommended)
+
+1. In Jellyfin open **Dashboard → Plugins → Repositories → +** and add:
 
    ```
-   <jellyfin-data>/plugins/AutoDeleteWatchedEpisodes/
+   Name: psalmpson
+   URL:  https://raw.githubusercontent.com/psalmpson/jellyfin-autodelete-watched-episodes/main/manifest.json
    ```
 
-   On Linux this is usually `~/.local/share/jellyfin/plugins/`, on Windows
-   `%LOCALAPPDATA%\jellyfin\plugins\`, and in Docker `/config/plugins/`.
+2. Save, open the **Catalog** tab, find **Auto Delete Watched Episodes** and click **Install**.
+   Jellyfin asks you to restart, and keeps the plugin updated from then on.
+
+   > If you previously copied the DLL by hand, delete the manual
+   > `<jellyfin-data>/plugins/AutoDeleteWatchedEpisodes/` folder first, otherwise Jellyfin loads
+   > the same plugin twice.
+
+### Manually
+
+1. Create a folder for the plugin inside the server's plugin directory, for example
+   `<jellyfin-data>/plugins/AutoDeleteWatchedEpisodes/`. On Linux this is usually
+   `~/.local/share/jellyfin/plugins/`, on Windows `%LOCALAPPDATA%\jellyfin\plugins\`, and in
+   Docker `/config/plugins/`.
 
 2. Copy `Jellyfin.Plugin.AutoDelete.dll` (and `Jellyfin.Plugin.AutoDelete.pdb` if you want stack
-   traces with line numbers) into that folder.
+   traces with line numbers) into that folder. A prebuilt DLL is committed at
+   [`dist/Jellyfin.Plugin.AutoDelete.dll`](dist/Jellyfin.Plugin.AutoDelete.dll) and is also
+   attached to each [release](https://github.com/psalmpson/jellyfin-autodelete-watched-episodes/releases).
 
 3. Restart Jellyfin.
 
@@ -103,11 +119,29 @@ Deleting media is irreversible, so the plugin is deliberately conservative:
 - There is no per-user "keep it for user X" behaviour: if any user watched an episode, it is
   eligible for deletion.
 
-## Publishing a plugin repository (optional)
+## Plugin repository
 
-`build.yaml` contains the manifest metadata used by Jellyfin's plugin repository system. Update
-`owner` (and `targetAbi` if you target a different server version) before submitting, then follow
-the [plugin repository guide](https://jellyfin.org/docs/general/server/plugins/).
+[`manifest.json`](manifest.json) in the repository root is the manifest Jellyfin reads when you add
+this repository, and the installable package is attached to a
+[GitHub release](https://github.com/psalmpson/jellyfin-autodelete-watched-episodes/releases).
+
+To publish a new version:
+
+1. Bump `<Version>` in `Jellyfin.Plugin.AutoDelete/Jellyfin.Plugin.AutoDelete.csproj` and `version`
+   in `build.yaml`.
+2. Rebuild:
+   `dotnet publish Jellyfin.Plugin.AutoDelete/Jellyfin.Plugin.AutoDelete.csproj -c Release -o dist`
+3. Zip `dist/*.dll`, `dist/*.pdb` and `dist/*.xml` **flat** (files at the archive root, not inside a
+   sub-folder, because Jellyfin extracts the archive straight into the plugin folder) and attach it
+   to a release tagged after the version:
+
+   ```bash
+   gh release create v1.0.1.0 dist/Jellyfin.Plugin.AutoDelete_1.0.1.0.zip
+   ```
+
+4. Add an entry to the `versions` array in `manifest.json` with the new `version`, `sourceUrl` and
+   the **MD5** `checksum` of the zip (Jellyfin verifies the download with MD5, case-insensitively).
+   Keep `targetAbi` at the oldest server version the plugin supports.
 
 ## Licence
 

@@ -9,7 +9,7 @@ description: >-
   delay (for example 24 hours) has passed. Series and seasons that no longer contain any episodes
   are removed as well. Includes a dry run mode that only logs what would be deleted.
 category: "General"
-owner: "your-github-username"
+owner: "psalmpson"
 artifacts:
   - "Jellyfin.Plugin.AutoDelete.dll"
 changelog: "Initial release."
