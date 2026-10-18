@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build plugin
+        run: dotnet publish Jellyfin.Plugin.AutoDelete/Jellyfin.Plugin.AutoDelete.csproj -c Release -o artifacts
+
+      - name: Upload plugin dll
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jellyfin.Plugin.AutoDelete
+          path: |
+            artifacts/Jellyfin.Plugin.AutoDelete.dll
+            artifacts/Jellyfin.Plugin.AutoDelete.pdb

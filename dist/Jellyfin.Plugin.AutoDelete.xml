@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Jellyfin.Plugin.AutoDelete</name>
+    </assembly>
+    <members>
+        <member name="T:Jellyfin.Plugin.AutoDelete.Configuration.DelayUnit">
+            <summary>
+            The unit used for the delete delay.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AutoDelete.Configuration.DelayUnit.Minutes">
+            <summary>
+            Minutes.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AutoDelete.Configuration.DelayUnit.Hours">
+            <summary>
+            Hours.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AutoDelete.Configuration.DelayUnit.Days">
+            <summary>
+            Days.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration">
+            <summary>
+            The plugin configuration.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.Enabled">
+            <summary>
+            Gets or sets a value indicating whether the scheduled task should do anything.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.DryRun">
+            <summary>
+            Gets or sets a value indicating whether files should only be logged and not deleted.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.DeleteAfterValue">
+            <summary>
+            Gets or sets how long an episode is kept after it was watched.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.DeleteAfterUnit">
+            <summary>
+            Gets or sets the unit of <see cref="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.DeleteAfterValue"/>.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.Libraries">
+            <summary>
+            Gets or sets the IDs of the libraries that should be scanned for watched episodes.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.RemoveEmptySeries">
+            <summary>
+            Gets or sets a value indicating whether series without episodes should be removed.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.DeleteSeriesFolder">
+            <summary>
+            Gets or sets a value indicating whether the folder of an empty series should be deleted from disk.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.RemoveEmptySeasons">
+            <summary>
+            Gets or sets a value indicating whether seasons without episodes should be removed.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.Configuration.PluginConfiguration.GetDeleteDelay">
+            <summary>
+            Gets the configured delay as a <see cref="T:System.TimeSpan"/>.
+            </summary>
+            <returns>The delay.</returns>
+        </member>
+        <member name="T:Jellyfin.Plugin.AutoDelete.Plugin">
+            <summary>
+            Main plugin entry point.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AutoDelete.Plugin.PluginId">
+            <summary>
+            The unique identifier of this plugin.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.Plugin.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,MediaBrowser.Model.Serialization.IXmlSerializer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.AutoDelete.Plugin"/> class.
+            </summary>
+            <param name="applicationPaths">Instance of the <see cref="T:MediaBrowser.Common.Configuration.IApplicationPaths"/> interface.</param>
+            <param name="xmlSerializer">Instance of the <see cref="T:MediaBrowser.Model.Serialization.IXmlSerializer"/> interface.</param>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Plugin.Instance">
+            <summary>
+            Gets the current plugin instance.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Plugin.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Plugin.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.Plugin.Description">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.Plugin.GetPages">
+            <inheritdoc />
+        </member>
+        <member name="T:Jellyfin.Plugin.AutoDelete.PluginServiceRegistrator">
+            <summary>
+            Registers the plugin's services with Jellyfin's dependency injection container.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.PluginServiceRegistrator.RegisterServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,MediaBrowser.Controller.IServerApplicationHost)">
+            <inheritdoc />
+        </member>
+        <member name="T:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask">
+            <summary>
+            Scheduled task that deletes episodes once their grace period has expired.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.#ctor(Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask"/> class.
+            </summary>
+            <param name="cleanupService">The cleanup service.</param>
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.Key">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.Category">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.GetDefaultTriggers">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.ScheduledTasks.AutoDeleteWatchedEpisodesTask.ExecuteAsync(System.IProgress{System.Double},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService">
+            <summary>
+            Finds episodes that were watched longer ago than the configured delay and deletes them.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService.#ctor(MediaBrowser.Controller.Library.ILibraryManager,MediaBrowser.Controller.Library.IUserManager,MediaBrowser.Controller.Library.IUserDataManager,MediaBrowser.Model.IO.IFileSystem,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService"/> class.
+            </summary>
+            <param name="libraryManager">Instance of the <see cref="T:MediaBrowser.Controller.Library.ILibraryManager"/> interface.</param>
+            <param name="userManager">Instance of the <see cref="T:MediaBrowser.Controller.Library.IUserManager"/> interface.</param>
+            <param name="userDataManager">Instance of the <see cref="T:MediaBrowser.Controller.Library.IUserDataManager"/> interface.</param>
+            <param name="fileSystem">Instance of the <see cref="T:MediaBrowser.Model.IO.IFileSystem"/> interface.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.AutoDelete.Services.EpisodeCleanupService.RunAsync(System.IProgress{System.Double},System.Threading.CancellationToken)">
+            <summary>
+            Runs the cleanup once.
+            </summary>
+            <param name="progress">Progress reporter.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>A task representing the cleanup.</returns>
+        </member>
+    </members>
+</doc>

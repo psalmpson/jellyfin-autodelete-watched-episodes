@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Auto Delete Watched Episodes</title>
+</head>
+<body>
+    <div id="AutoDeleteWatchedEpisodesConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+
+                <div class="verticalSection">
+                    <h2 class="sectionTitle">Auto Delete Watched Episodes</h2>
+                    <p class="fieldDescription">
+                        Episodes are deleted once every watched episode in the selected libraries has been watched longer ago
+                        than the delay below. The most recent watch by any user restarts the countdown.
+                    </p>
+                    <p class="fieldDescription">
+                        The cleanup runs as a scheduled task (<strong>Dashboard &rarr; Scheduled Tasks &rarr; Delete watched episodes</strong>)
+                        and can be triggered manually with the button below.
+                    </p>
+                </div>
+
+                <form id="AutoDeleteConfigForm">
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="Enabled" type="checkbox" is="emby-checkbox" />
+                            <span>Enable automatic deletion</span>
+                        </label>
+                        <div class="fieldDescription">When disabled, the scheduled task does nothing at all.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="DryRun" type="checkbox" is="emby-checkbox" />
+                            <span>Dry run (log only, do not delete anything)</span>
+                        </label>
+                        <div class="fieldDescription">
+                            While enabled, the task only writes what it <em>would</em> delete to the Jellyfin log.
+                            Leave this on until you are happy with the results, then turn it off to start deleting.
+                        </div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="DeleteAfterValue">Delete episodes after</label>
+                        <div style="display:flex; align-items:center; gap:.5em;">
+                            <input id="DeleteAfterValue" type="number" min="0" step="0.5" is="emby-input" style="max-width:8em;" />
+                            <select id="DeleteAfterUnit" is="emby-select" class="emby-select-withcolor emby-select" style="max-width:10em;">
+                                <option value="Minutes">Minutes</option>
+                                <option value="Hours">Hours</option>
+                                <option value="Days">Days</option>
+                            </select>
+                        </div>
+                        <div class="fieldDescription">How long an episode is kept after it was last watched. For example 24 Hours.</div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <h2 class="sectionTitle">Libraries to watch</h2>
+                        <div class="fieldDescription">
+                            Only episodes from the selected libraries are considered, so pick your TV libraries.
+                            If no library is selected, nothing is deleted.
+                        </div>
+                        <div id="LibraryList"></div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <h2 class="sectionTitle">Cleanup of empty folders</h2>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="RemoveEmptySeries" type="checkbox" is="emby-checkbox" />
+                                <span>Remove series once they have no episodes left</span>
+                            </label>
+                            <div class="fieldDescription">A series is only removed when none of its episodes are left in the library.</div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="DeleteSeriesFolder" type="checkbox" is="emby-checkbox" />
+                                <span>Also delete the series folder from disk</span>
+                            </label>
+                            <div class="fieldDescription">
+                                Leftover artwork, subtitles and metadata files are removed with it. The folder is kept if it still
+                                contains video files, or if it is a library folder itself.
+                            </div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="RemoveEmptySeasons" type="checkbox" is="emby-checkbox" />
+                                <span>Remove seasons once they have no episodes left</span>
+                            </label>
+                            <div class="fieldDescription">Useful when only part of a series was deleted.</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                        <button is="emby-button" id="RunNowButton" type="button" class="raised block emby-button" style="margin-top:1em;">
+                            <span>Save and run the task now</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function () {
+                'use strict';
+
+                var pluginId = '9386bc33-7cb3-4303-802a-c7f53827022f';
+                var taskKey = 'AutoDeleteWatchedEpisodes';
+
+                var page = document.querySelector('#AutoDeleteWatchedEpisodesConfigPage');
+                var form = document.querySelector('#AutoDeleteConfigForm');
+                var libraryList = document.querySelector('#LibraryList');
+
+                function getVirtualFolders() {
+                    if (typeof ApiClient.getVirtualFolders === 'function') {
+                        return Promise.resolve(ApiClient.getVirtualFolders());
+                    }
+
+                    return ApiClient.ajax({
+                        type: 'GET',
+                        url: ApiClient.getUrl('Library/VirtualFolders'),
+                        dataType: 'json'
+                    });
+                }
+
+                function createCheckbox(container, id, name, checked) {
+                    var wrapper = document.createElement('div');
+                    wrapper.className = 'checkboxContainer';
+
+                    var label = document.createElement('label');
+                    label.className = 'emby-checkbox-label';
+
+                    var input;
+                    try {
+                        input = document.createElement('input', { is: 'emby-checkbox' });
+                    } catch (err) {
+                        input = document.createElement('input');
+                    }
+
+                    input.setAttribute('type', 'checkbox');
+                    input.setAttribute('data-library-id', id);
+                    input.checked = checked;
+
+                    var span = document.createElement('span');
+                    span.textContent = name;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    wrapper.appendChild(label);
+                    container.appendChild(wrapper);
+                }
+
+                function renderLibraries(folders, selectedIds) {
+                    libraryList.innerHTML = '';
+
+                    if (!folders || !folders.length) {
+                        libraryList.innerHTML = '<div class="fieldDescription">No libraries were found.</div>';
+                        return;
+                    }
+
+                    folders.forEach(function (folder) {
+                        var id = folder.ItemId;
+                        if (!id) {
+                            return;
+                        }
+
+                        var name = folder.Name || id;
+                        if (folder.CollectionType) {
+                            name = name + ' (' + folder.CollectionType + ')';
+                        }
+
+                        createCheckbox(libraryList, id, name, selectedIds.indexOf(id) !== -1);
+                    });
+                }
+
+                function fillForm(config, folders) {
+                    document.querySelector('#Enabled').checked = config.Enabled !== false;
+                    document.querySelector('#DryRun').checked = config.DryRun !== false;
+                    document.querySelector('#DeleteAfterValue').value = config.DeleteAfterValue;
+                    document.querySelector('#DeleteAfterUnit').value = config.DeleteAfterUnit || 'Hours';
+                    document.querySelector('#RemoveEmptySeries').checked = config.RemoveEmptySeries !== false;
+                    document.querySelector('#DeleteSeriesFolder').checked = config.DeleteSeriesFolder !== false;
+                    document.querySelector('#RemoveEmptySeasons').checked = config.RemoveEmptySeasons !== false;
+
+                    renderLibraries(folders, config.Libraries || []);
+                }
+
+                function collectForm(config) {
+                    config.Enabled = document.querySelector('#Enabled').checked;
+                    config.DryRun = document.querySelector('#DryRun').checked;
+                    config.DeleteAfterValue = parseFloat(document.querySelector('#DeleteAfterValue').value) || 0;
+                    config.DeleteAfterUnit = document.querySelector('#DeleteAfterUnit').value;
+                    config.RemoveEmptySeries = document.querySelector('#RemoveEmptySeries').checked;
+                    config.DeleteSeriesFolder = document.querySelector('#DeleteSeriesFolder').checked;
+                    config.RemoveEmptySeasons = document.querySelector('#RemoveEmptySeasons').checked;
+
+                    config.Libraries = Array.prototype.slice
+                        .call(libraryList.querySelectorAll('input[type="checkbox"]'))
+                        .filter(function (checkbox) { return checkbox.checked; })
+                        .map(function (checkbox) { return checkbox.getAttribute('data-library-id'); });
+
+                    return config;
+                }
+
+                function saveConfiguration() {
+                    Dashboard.showLoadingMsg();
+
+                    return ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        return ApiClient.updatePluginConfiguration(pluginId, collectForm(config));
+                    });
+                }
+
+                function runTaskNow() {
+                    Dashboard.showLoadingMsg();
+
+                    return ApiClient.getScheduledTasks().then(function (tasks) {
+                        var task = (tasks || []).filter(function (candidate) {
+                            return candidate.Key === taskKey;
+                        })[0];
+
+                        if (!task) {
+                            Dashboard.hideLoadingMsg();
+                            Dashboard.alert('The scheduled task could not be found. Please reload the page and try again.');
+                            return;
+                        }
+
+                        return ApiClient.ajax({
+                            type: 'POST',
+                            url: ApiClient.getUrl('ScheduledTasks/Running/' + task.Id)
+                        }).then(function () {
+                            Dashboard.hideLoadingMsg();
+                            Dashboard.alert({
+                                title: 'Task started',
+                                text: 'The "Delete watched episodes" task is running now. Check the Jellyfin log to see what it did.'
+                            });
+                        });
+                    });
+                }
+
+                page.addEventListener('pageshow', function () {
+                    Dashboard.showLoadingMsg();
+
+                    Promise.all([ApiClient.getPluginConfiguration(pluginId), getVirtualFolders()])
+                        .then(function (results) {
+                            fillForm(results[0], results[1]);
+                            Dashboard.hideLoadingMsg();
+                        })
+                        .catch(function () {
+                            Dashboard.hideLoadingMsg();
+                        });
+                });
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    saveConfiguration().then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+
+                    return false;
+                });
+
+                document.querySelector('#RunNowButton').addEventListener('click', function () {
+                    saveConfiguration().then(function () {
+                        return runTaskNow();
+                    });
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>
